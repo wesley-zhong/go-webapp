@@ -1,6 +1,8 @@
 package main
 
 import (
+	"encoding/json"
+	"fmt"
 	"net/http"
 	"reflect"
 
@@ -29,6 +31,18 @@ func main() {
 			c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
 			return
 		}
+		fmt.Println("get rpc service = " + rpcReq.ServiceName)
+
+		aresMethod := coreInst.GetCallFun(rpcReq.ServiceName, rpcReq.MethodName)
+		param := reflect.New(aresMethod.ParamsType)
+		realParam := param.Interface()
+		err := json.Unmarshal([]byte(rpcReq.PayLoad), realParam)
+		if err != nil {
+			fmt.Println(err)
+		}
+		ret := aresMethod.Invoke(realParam)
+		c.JSON(200, ret[0].Elem().Interface())
+
 		c.JSON(200, gin.H{"data": rpcReq})
 
 	})
