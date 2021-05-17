@@ -14,3 +14,8 @@ func (*UserLoginService) UserLogin(login *reqs.Login) interface{} {
 	login.User = "hello:" + login.User
 	return login
 }
+
+func (*UserLoginService) UserUpdate(userInfo *reqs.UserInfo) interface{} {
+	fmt.Println("user info update username =" + userInfo.UserName)
+	return userInfo
+}
